@@ -83,8 +83,8 @@ export default function PlanoPantalla() {
           <PlanoSVG
             lotes={lotes}
             onTapLote={handleTapLote}
-            svgWidth={600}
-            svgHeight={520}
+            // svgWidth={600}
+            // svgHeight={520}
           />
         </View>
 

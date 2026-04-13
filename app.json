@@ -7,20 +7,23 @@
     "scheme": "lotizacion",
     "userInterfaceStyle": "light",
     "splash": {
-      "backgroundColor": "#1A1A2E"
+      "backgroundColor": "#1A1A2E",
+      "resizeMode": "contain"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#1A1A2E"
       },
-      "package": "com.tuempresa.lotizacion"
+      "package": "com.netza.lotizacion",
+      "buildToolsVersion": "34.0.0",
+      "compileSdkVersion": 34,
+      "targetSdkVersion": 34
     },
     "ios": {
       "bundleIdentifier": "com.tuempresa.lotizacion"
     },
     "plugins": [
-      "expo-router",
-      "expo-updates"
+      "expo-router" 
     ],
     "updates": {
       "url": "https://u.expo.dev/8c485bcb-b909-46e4-9f1f-981049fd661d",

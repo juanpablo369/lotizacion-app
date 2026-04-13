@@ -7,6 +7,7 @@
     "scheme": "lotizacion",
     "userInterfaceStyle": "light",
     "splash": {
+      "image": "./assets/splash.png",
       "backgroundColor": "#1A1A2E",
       "resizeMode": "contain"
     },

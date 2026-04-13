@@ -23,7 +23,8 @@
       "bundleIdentifier": "com.tuempresa.lotizacion"
     },
     "plugins": [
-      "expo-router" 
+      "expo-router",
+      "expo-updates"
     ],
     "updates": {
       "url": "https://u.expo.dev/8c485bcb-b909-46e4-9f1f-981049fd661d",

@@ -131,7 +131,7 @@ export default function PlanoPantalla() {
 const styles = StyleSheet.create({
   contenedor:       { flex: 1, backgroundColor: COLORS.fondo },
   contenedorDark:   { backgroundColor: '#0f0f1a' },
-  header:           { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10 },
+  header:           { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10, paddingTop: 14 },
   titulo:           { color: '#fff', fontSize: 16, fontWeight: 'bold' },
   headerRight:      { flexDirection: 'row', alignItems: 'center', gap: 6 },
   leyendaItem:      { flexDirection: 'row', alignItems: 'center', gap: 3 },

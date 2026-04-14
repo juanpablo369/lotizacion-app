@@ -118,8 +118,8 @@ function VistaCuadricula({ lotes, onTapLote, dark = false }: Props) {
   const GAP_COL   = 6;   // gap entre columna izq y der
   const GAP_CARD  = 4;   // gap entre cards de la misma columna
 
-  // Anchos de cada columna
-  const wIzq = Math.floor((W - PAD * 2 - GAP_COL) * 0.38);
+  // Anchos iguales para ambas columnas
+  const wIzq = Math.floor((W - PAD * 2 - GAP_COL) / 2);
   const wDer = W - PAD * 2 - GAP_COL - wIzq;
 
   // ── Cálculo de alturas para que ambas columnas tengan la misma altura total ──
@@ -146,25 +146,29 @@ function VistaCuadricula({ lotes, onTapLote, dark = false }: Props) {
       >
         <View style={[st.stripe, { backgroundColor: color }]} />
         <View style={st.cardInner}>
-          <View style={{ flex: 1 }}>
+          {/* Izquierda: número y nombre */}
+          <View style={{ flex: 1, marginRight: 4 }}>
             <Text style={[st.num, { color: txt }]}>L{num}</Text>
             {estado !== 'disponible' && info?.comprador ? (
               <Text style={[st.nombre, { color: txt }]} numberOfLines={1}>
                 {primerNombre(info.comprador)}
               </Text>
             ) : null}
+          </View>
+          {/* Derecha: badge estado + precios */}
+          <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
+            <View style={[st.badge, { backgroundColor: color + '33' }]}>
+              <Text style={[st.badgeTxt, { color }]}>{label}</Text>
+            </View>
             {estado === 'vendido' && info?.precio ? (
-              <Text style={[st.precio, { color: txtSoft }]}>${formatNum(info.precio)}</Text>
+              <Text style={[st.precio, { color: txtSoft, marginTop: 2 }]}>${formatNum(info.precio)}</Text>
             ) : null}
             {estado === 'reservado' ? (
               <>
-                {info?.monto_reserva ? <Text style={[st.precio,{color:txtSoft}]}>Res ${formatNum(info.monto_reserva)}</Text> : null}
-                {info?.precio        ? <Text style={[st.precio,{color:txtSoft}]}>Tot ${formatNum(info.precio)}</Text>        : null}
+                {info?.monto_reserva ? <Text style={[st.precio,{color:txtSoft,marginTop:2}]}>Res ${formatNum(info.monto_reserva)}</Text> : null}
+                {info?.precio        ? <Text style={[st.precio,{color:txtSoft}]}>Tot ${formatNum(info.precio)}</Text> : null}
               </>
             ) : null}
-          </View>
-          <View style={[st.badge, { backgroundColor: color + '33' }]}>
-            <Text style={[st.badgeTxt, { color }]}>{label}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -328,7 +332,7 @@ const st = StyleSheet.create({
   // Cards
   card:     { borderRadius: 8, borderWidth: 1, overflow: 'hidden' },
   stripe:   { height: 4 },
-  cardInner:{ flex: 1, padding: 7, justifyContent: 'space-between' },
+  cardInner:{ flex: 1, padding: 7, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   num:      { fontSize: 12, fontWeight: 'bold' },
   nombre:   { fontSize: 11, marginTop: 1 },
   precio:   { fontSize: 10, marginTop: 1 },

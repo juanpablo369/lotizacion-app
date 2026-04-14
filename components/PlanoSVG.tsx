@@ -256,17 +256,17 @@ function VistaMapa({ lotes, onTapLote, dark = false }: Props) {
             </Defs>
             {LOTES_SVG.map(lote=>{
               const info=lotes[lote.id], estado=info?.estado??'disponible';
-              const fill=GRAD[estado]??GRAD.disponible, centro=getCentro(lote.d);
+              const centro=getCentro(lote.d);
+              const color = estado==='vendido' ? '#ABABAB' : estado==='reservado' ? '#F0C060' : '#7BC67A';
+              const strokeColor = dark ? '#555' : '#333';
               const lineas:string[]=[];
-              if(estado==='vendido'){ if(info?.comprador)lineas.push(primerNombre(info.comprador)); if(info?.precio)lineas.push(`$${formatNum(info.precio)}`); }
-              else if(estado==='reservado'){ if(info?.comprador)lineas.push(primerNombre(info.comprador)); if(info?.monto_reserva)lineas.push(`Res $${formatNum(info.monto_reserva)}`); if(info?.precio)lineas.push(`Tot $${formatNum(info.precio)}`); }
+              if(estado==='vendido'){ if(info?.comprador)lineas.push(primerNombre(info.comprador)); if(info?.precio)lineas.push('$'+formatNum(info.precio)); }
+              else if(estado==='reservado'){ if(info?.comprador)lineas.push(primerNombre(info.comprador)); if(info?.monto_reserva)lineas.push('Res $'+formatNum(info.monto_reserva)); if(info?.precio)lineas.push('Tot $'+formatNum(info.precio)); }
               else lineas.push(lote.id.replace('lote_0','L').replace('lote_','L'));
               const LINE_H=9, oY=-((lineas.length-1)*LINE_H)/2;
               return (
                 <G key={lote.id}>
-                  <Path d={lote.d} fill="rgba(0,0,0,0.18)" stroke="none" translateX={3} translateY={3}/>
-                  <Path d={lote.d} fill={fill} stroke="#444" strokeWidth={1}/>
-                  <Path d={lote.d} fill="rgba(255,255,255,0.18)" stroke="none" scaleY={0.4} originY={centro.y}/>
+                  <Path d={lote.d} fill={color} stroke={strokeColor} strokeWidth={1}/>
                   {lineas.map((linea,i)=>(
                     <SvgText key={i} x={centro.x} y={centro.y+oY+i*LINE_H}
                       fontSize={7} fontWeight={i===0?'bold':'normal'}

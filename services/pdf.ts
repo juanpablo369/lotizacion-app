@@ -200,9 +200,7 @@ export async function generarPDFLote(lote: any) {
 
 // ── Compartir un PDF (WhatsApp, email, Drive, etc) ────────
 export async function compartirPDF(uri: string, nombre: string) {
-  const destino = FileSystem.documentDirectory + nombre;
-  await FileSystem.copyAsync({ from: uri, to: destino });
-  await Sharing.shareAsync(destino, {
+  await Sharing.shareAsync(uri, {
     mimeType: 'application/pdf',
     dialogTitle: 'Compartir reporte',
     UTI: 'com.adobe.pdf',
@@ -211,7 +209,12 @@ export async function compartirPDF(uri: string, nombre: string) {
 
 // ── Descargar PDF al almacenamiento del celular ───────────
 export async function descargarPDF(uri: string, nombre: string) {
-  const destino = FileSystem.documentDirectory + nombre;
-  await FileSystem.copyAsync({ from: uri, to: destino });
-  return destino;
+  // En versiones nuevas de expo-file-system, usamos el uri directo
+  // que ya está en el directorio de caché de la app
+  await Sharing.shareAsync(uri, {
+    mimeType: 'application/pdf',
+    dialogTitle: 'Guardar PDF',
+    UTI: 'com.adobe.pdf',
+  });
+  return uri;
 }

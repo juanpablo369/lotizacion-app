@@ -3,6 +3,7 @@ import {
   Modal, View, Text, StyleSheet, TouchableOpacity,
   ScrollView, ActivityIndicator, Alert,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { getLotes } from '../services/api';
 import { generarPDFLote, compartirPDF, descargarPDF } from '../services/pdf';
 import { COLORS, ESTADOS } from '../constants';
@@ -22,15 +23,15 @@ function formatFecha(iso: string) {
 }
 
 export default function PantallaHistorial({ visible, onCerrar, dark = false }: Props) {
-  const [lotes,    setLotes]    = useState<any[]>([]);
+  const [lotes, setLotes] = useState<any[]>([]);
   const [cargando, setCargando] = useState(true);
-  const [pdfId,    setPdfId]    = useState<string | null>(null); // lote generando PDF
+  const [pdfId, setPdfId] = useState<string | null>(null); // lote generando PDF
 
-  const bg     = dark ? '#0f0f1a' : '#F5F5F0';
+  const bg = dark ? '#0f0f1a' : '#F5F5F0';
   const bgCard = dark ? '#1e1e30' : '#ffffff';
   const border = dark ? '#2a2a3a' : '#e0e0e0';
-  const txt    = dark ? '#e0e0e0' : '#222';
-  const soft   = dark ? '#777'    : '#999';
+  const txt = dark ? '#e0e0e0' : '#222';
+  const soft = dark ? '#777' : '#999';
 
   useEffect(() => {
     if (visible) cargar();
@@ -54,34 +55,35 @@ export default function PantallaHistorial({ visible, onCerrar, dark = false }: P
 
   const handlePDF = async (lote: any) => {
     Alert.alert(
-      `${lote.id.replace('lote_0','L').replace('lote_','L')} — ${lote.comprador ?? 'Sin nombre'}`,
-      '¿Qué querés hacer?',
+      `${lote.id.replace('lote_0', 'L').replace('lote_', 'L')} — ${lote.comprador ?? 'Sin nombre'}`,
+      '¿Qué deseas hacer?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
-          text: '📤 Compartir',
+          text: 'Compartir',
           onPress: async () => {
             setPdfId(lote.id);
             try {
               const uri = await generarPDFLote(lote);
-              const nombre = `lote_${lote.id}_${(lote.comprador ?? 'sin_nombre').replace(/\s+/g,'_')}.pdf`;
+              const nombre = `lote_${lote.id}_${(lote.comprador ?? 'sin_nombre').replace(/\s+/g, '_')}.pdf`;
               await compartirPDF(uri, nombre);
-            } catch {
-              Alert.alert('Error', 'No se pudo generar el PDF.');
+            } catch (e: any) {
+              console.log('PDF ERROR:', e?.message ?? e);
+              Alert.alert('Error', e?.message ?? 'No se pudo generar el PDF.');
             } finally {
               setPdfId(null);
             }
           },
         },
         {
-          text: '💾 Descargar',
+          text: 'Descargar',
           onPress: async () => {
             setPdfId(lote.id);
             try {
               const uri = await generarPDFLote(lote);
-              const nombre = `lote_${lote.id}_${(lote.comprador ?? 'sin_nombre').replace(/\s+/g,'_')}.pdf`;
+              const nombre = `lote_${lote.id}_${(lote.comprador ?? 'sin_nombre').replace(/\s+/g, '_')}.pdf`;
               const destino = await descargarPDF(uri, nombre);
-              Alert.alert('✅ Descargado', `Guardado en:\n${destino}`);
+              Alert.alert('Descargado', `Guardado en:\n${destino}`);
             } catch {
               Alert.alert('Error', 'No se pudo descargar el PDF.');
             } finally {
@@ -93,7 +95,7 @@ export default function PantallaHistorial({ visible, onCerrar, dark = false }: P
     );
   };
 
-  const vendidos   = lotes.filter(l => l.estado === 'vendido').length;
+  const vendidos = lotes.filter(l => l.estado === 'vendido').length;
   const reservados = lotes.filter(l => l.estado === 'reservado').length;
   const totalVendido = lotes
     .filter(l => l.estado === 'vendido' && l.precio)
@@ -105,7 +107,10 @@ export default function PantallaHistorial({ visible, onCerrar, dark = false }: P
 
         {/* Header */}
         <View style={[styles.header, { backgroundColor: dark ? '#16162a' : COLORS.primario }]}>
-          <Text style={styles.headerTxt}>📋 Bitácora</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <MaterialIcons name="assignment" size={20} color="#fff" />
+            <Text style={styles.headerTxt}>Bitácora</Text>
+          </View>
           <TouchableOpacity onPress={onCerrar} style={styles.btnCerrar}>
             <Text style={styles.btnCerrarTxt}>✕</Text>
           </TouchableOpacity>
@@ -129,8 +134,8 @@ export default function PantallaHistorial({ visible, onCerrar, dark = false }: P
               </View>
               <View style={[styles.statDivider, { backgroundColor: border }]} />
               <View style={styles.statItem}>
-                <Text style={[styles.statNum, { color: COLORS.primario }]}>
-                  ${totalVendido >= 1000 ? (totalVendido/1000).toFixed(0)+'k' : totalVendido}
+                <Text style={[styles.statNum, { color: txt }]}>
+                  ${totalVendido >= 1000 ? (totalVendido / 1000).toFixed(0) + 'k' : totalVendido}
                 </Text>
                 <Text style={[styles.statLbl, { color: soft }]}>Total vendido</Text>
               </View>
@@ -142,9 +147,9 @@ export default function PantallaHistorial({ visible, onCerrar, dark = false }: P
 
             {/* Lista de lotes */}
             {lotes.map(lote => {
-              const num    = lote.id.replace('lote_0','L').replace('lote_','L');
-              const color  = lote.estado === 'vendido' ? '#ABABAB' : '#F0C060';
-              const label  = lote.estado === 'vendido' ? 'Vendido' : 'Reservado';
+              const num = lote.id.replace('lote_0', 'L').replace('lote_', 'L');
+              const color = lote.estado === 'vendido' ? '#ABABAB' : '#F0C060';
+              const label = lote.estado === 'vendido' ? 'Vendido' : 'Reservado';
               const generando = pdfId === lote.id;
 
               return (
@@ -166,10 +171,16 @@ export default function PantallaHistorial({ visible, onCerrar, dark = false }: P
                           <Text style={[styles.cardDato, { color: soft }]}>CI: {lote.cedula}</Text>
                         )}
                         {lote.telefono && (
-                          <Text style={[styles.cardDato, { color: soft }]}>📞 {lote.telefono}</Text>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                            <MaterialIcons name="phone" size={12} color={soft} />
+                            <Text style={[styles.cardDato, { color: soft }]}>{lote.telefono}</Text>
+                          </View>
                         )}
                         {lote.email && (
-                          <Text style={[styles.cardDato, { color: soft }]}>✉️ {lote.email}</Text>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                            <MaterialIcons name="email" size={12} color={soft} />
+                            <Text style={[styles.cardDato, { color: soft }]}>{lote.email}</Text>
+                          </View>
                         )}
                       </View>
                       <View style={styles.cardRight}>
@@ -196,8 +207,11 @@ export default function PantallaHistorial({ visible, onCerrar, dark = false }: P
                       disabled={generando}
                     >
                       {generando
-                        ? <ActivityIndicator size="small" color={COLORS.primario} />
-                        : <Text style={[styles.btnPDFTxt, { color: COLORS.primario }]}>📄 Descargar / Compartir PDF</Text>
+                        ? <ActivityIndicator size="small" color={txt} />
+                        : <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                            <MaterialIcons name="picture-as-pdf" size={16} color={txt} />
+                            <Text style={[styles.btnPDFTxt, { color: txt }]}>Descargar / Compartir PDF</Text>
+                          </View>
                       }
                     </TouchableOpacity>
                   </View>
@@ -213,31 +227,31 @@ export default function PantallaHistorial({ visible, onCerrar, dark = false }: P
 }
 
 const styles = StyleSheet.create({
-  contenedor:   { flex: 1 },
-  header:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, paddingTop: 50 },
-  headerTxt:    { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-  btnCerrar:    { padding: 6 },
+  contenedor: { flex: 1 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 14, paddingTop: 50 },
+  headerTxt: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
+  btnCerrar: { padding: 6 },
   btnCerrarTxt: { color: '#fff', fontSize: 20 },
-  resumen:      { flexDirection: 'row', borderRadius: 10, borderWidth: 1, padding: 16, marginBottom: 4 },
-  statItem:     { flex: 1, alignItems: 'center' },
-  statNum:      { fontSize: 22, fontWeight: 'bold' },
-  statLbl:      { fontSize: 11, marginTop: 2 },
-  statDivider:  { width: 1, marginHorizontal: 8 },
-  vacio:        { textAlign: 'center', marginTop: 40, fontSize: 14 },
-  card:         { borderRadius: 10, borderWidth: 1, overflow: 'hidden' },
-  cardStripe:   { height: 4 },
-  cardBody:     { padding: 12 },
-  cardTop:      { flexDirection: 'row', gap: 8 },
+  resumen: { flexDirection: 'row', borderRadius: 10, borderWidth: 1, padding: 16, marginBottom: 4 },
+  statItem: { flex: 1, alignItems: 'center' },
+  statNum: { fontSize: 22, fontWeight: 'bold' },
+  statLbl: { fontSize: 11, marginTop: 2 },
+  statDivider: { width: 1, marginHorizontal: 8 },
+  vacio: { textAlign: 'center', marginTop: 40, fontSize: 14 },
+  card: { borderRadius: 10, borderWidth: 1, overflow: 'hidden' },
+  cardStripe: { height: 4 },
+  cardBody: { padding: 12 },
+  cardTop: { flexDirection: 'row', gap: 8 },
   cardTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
-  cardNum:      { fontSize: 14, fontWeight: 'bold' },
-  cardNombre:   { fontSize: 13, fontWeight: '500', marginBottom: 2 },
-  cardDato:     { fontSize: 12, marginBottom: 1 },
-  cardRight:    { alignItems: 'flex-end', justifyContent: 'flex-start', minWidth: 100 },
-  cardPrecio:   { fontSize: 14, fontWeight: 'bold' },
-  cardReserva:  { fontSize: 12, marginTop: 2 },
-  cardFecha:    { fontSize: 10, marginTop: 4 },
-  badge:        { borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 },
-  badgeTxt:     { fontSize: 10, fontWeight: '600' },
-  btnPDF:       { marginTop: 10, borderWidth: 1, borderRadius: 8, paddingVertical: 8, alignItems: 'center' },
-  btnPDFTxt:    { fontSize: 13, fontWeight: '500' },
+  cardNum: { fontSize: 14, fontWeight: 'bold' },
+  cardNombre: { fontSize: 13, fontWeight: '500', marginBottom: 2 },
+  cardDato: { fontSize: 12, marginBottom: 1 },
+  cardRight: { alignItems: 'flex-end', justifyContent: 'flex-start', minWidth: 100 },
+  cardPrecio: { fontSize: 14, fontWeight: 'bold' },
+  cardReserva: { fontSize: 12, marginTop: 2 },
+  cardFecha: { fontSize: 10, marginTop: 4 },
+  badge: { borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 },
+  badgeTxt: { fontSize: 10, fontWeight: '600' },
+  btnPDF: { marginTop: 10, borderWidth: 1, borderRadius: 8, paddingVertical: 8, alignItems: 'center' },
+  btnPDFTxt: { fontSize: 13, fontWeight: '500' },
 });

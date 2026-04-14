@@ -3,13 +3,14 @@ import {
   View, Text, StyleSheet, ActivityIndicator,
   TouchableOpacity, SafeAreaView, Switch, Alert,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import PlanoSVG           from '../components/PlanoSVG';
-import ModalLote          from '../components/ModalLote';
+import PlanoSVG from '../components/PlanoSVG';
+import ModalLote from '../components/ModalLote';
 // import PantallaPIN        from '../components/PantallaPIN';
-import PantallaHistorial  from '../components/PantallaHistorial';
-import { useLotes }       from '../hooks/useLotes';
+import PantallaHistorial from '../components/PantallaHistorial';
+import { useLotes } from '../hooks/useLotes';
 // import { useAuth  }       from '../hooks/useAuth';
 import { COLORS, ESTADOS } from '../constants';
 import { generarPDFGeneral, compartirPDF, descargarPDF } from '../services/pdf';
@@ -21,11 +22,11 @@ export default function PlanoPantalla() {
   // const { token, checking, login, logout }                       = useAuth();
   const { lotes, cargando, error, cargar, actualizar, poner_disponible } = useLotes(LOTIZACION_ID);
   const [loteSeleccionado, setLoteSeleccionado] = useState<any>(null);
-  const [modalVisible,     setModalVisible]     = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [historialVisible, setHistorialVisible] = useState(false);
-  const [dark,             setDark]             = useState(false);
-  const [darkCargado,      setDarkCargado]      = useState(false);
-  const [generandoPDF,     setGenerandoPDF]     = useState(false);
+  const [dark, setDark] = useState(false);
+  const [darkCargado, setDarkCargado] = useState(false);
+  const [generandoPDF, setGenerandoPDF] = useState(false);
 
   useEffect(() => {
     AsyncStorage.getItem(DARK_MODE_KEY).then(val => {
@@ -36,7 +37,7 @@ export default function PlanoPantalla() {
 
   const toggleDark = (val: boolean) => {
     setDark(val);
-    AsyncStorage.setItem(DARK_MODE_KEY, String(val)).catch(() => {});
+    AsyncStorage.setItem(DARK_MODE_KEY, String(val)).catch(() => { });
   };
 
   const handleTapLote = (id: string) => {
@@ -53,34 +54,36 @@ export default function PlanoPantalla() {
 
   const handlePDFGeneral = () => {
     Alert.alert(
-      '📄 Reporte general',
-      '¿Qué querés hacer con el reporte de todos los propietarios?',
+      'Reporte general',
+      '¿Qué acción tomamos con el reporte de los propietarios?',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
-          text: '📤 Compartir',
+          text: 'Compartir',
           onPress: async () => {
             setGenerandoPDF(true);
             try {
               const uri = await generarPDFGeneral(lotes);
               await compartirPDF(uri, 'refugio_verde_reporte.pdf');
-            } catch {
-              Alert.alert('Error', 'No se pudo generar el PDF.');
+            } catch (e: any) {
+              console.log('PDF ERROR:', e?.message ?? e);
+              Alert.alert('Error', e?.message ?? 'No se pudo generar el PDF.');
             } finally {
               setGenerandoPDF(false);
             }
           },
         },
         {
-          text: '💾 Descargar',
+          text: 'Descargar',
           onPress: async () => {
             setGenerandoPDF(true);
             try {
               const uri = await generarPDFGeneral(lotes);
               const destino = await descargarPDF(uri, 'refugio_verde_reporte.pdf');
-              Alert.alert('✅ Descargado', `Guardado en:\n${destino}`);
-            } catch {
-              Alert.alert('Error', 'No se pudo generar el PDF.');
+              Alert.alert('Descargado', `Guardado en:\n${destino}`);
+            } catch (e: any) {
+              console.log('PDF ERROR:', e?.message ?? e);
+              Alert.alert('Error', e?.message ?? 'No se pudo generar el PDF.');
             } finally {
               setGenerandoPDF(false);
             }
@@ -96,12 +99,12 @@ export default function PlanoPantalla() {
   }, {});
 
   if (!darkCargado) {
-    return <View style={styles.centro}><ActivityIndicator size="large" color={COLORS.primario}/></View>;
+    return <View style={styles.centro}><ActivityIndicator size="large" color={COLORS.primario} /></View>;
   }
 
   // if (!token) return <PantallaPIN onAutenticado={login}/>;
 
-  const bg    = dark ? '#0f0f1a' : COLORS.fondo;
+  const bg = dark ? '#0f0f1a' : COLORS.fondo;
   const bgBar = dark ? '#16162a' : COLORS.primario;
 
   if (cargando) {
@@ -155,18 +158,18 @@ export default function PlanoPantalla() {
             />
             {/* Historial / Bitácora */}
             <TouchableOpacity onPress={() => setHistorialVisible(true)} style={styles.btnIcon}>
-              <Text style={styles.btnIconTxt}>📋</Text>
+              <MaterialIcons name="assignment" size={20} color="#fff" />
             </TouchableOpacity>
             {/* PDF general */}
             <TouchableOpacity onPress={handlePDFGeneral} style={styles.btnIcon} disabled={generandoPDF}>
               {generandoPDF
                 ? <ActivityIndicator size="small" color="#fff" />
-                : <Text style={styles.btnIconTxt}>📄</Text>
+                : <MaterialIcons name="picture-as-pdf" size={20} color="#fff" />
               }
             </TouchableOpacity>
             {/* Reload */}
             <TouchableOpacity onPress={cargar} style={styles.btnIcon}>
-              <Text style={styles.btnIconTxt}>↻</Text>
+              <MaterialIcons name="refresh" size={22} color="#fff" />
             </TouchableOpacity>
             {/* Logout
             <TouchableOpacity onPress={logout} style={styles.btnIcon}>
@@ -200,20 +203,20 @@ export default function PlanoPantalla() {
 }
 
 const styles = StyleSheet.create({
-  contenedor:       { flex: 1 },
-  header:           { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 10, paddingTop: 14 },
-  headerLeft:       { flex: 1 },
-  titulo:           { color: '#fff', fontSize: 15, fontWeight: 'bold' },
-  leyendaRow:       { flexDirection: 'row', gap: 8, marginTop: 3 },
-  leyendaItem:      { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  leyendaDot:       { width: 7, height: 7, borderRadius: 4 },
-  leyendaNum:       { color: 'rgba(255,255,255,0.8)', fontSize: 10 },
-  headerRight:      { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  btnIcon:          { padding: 6 },
-  btnIconTxt:       { fontSize: 17 },
-  centro:           { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 },
-  cargandoTxt:      { color: COLORS.textoSuave, fontSize: 14 },
-  errorTxt:         { color: COLORS.peligro, fontSize: 15, textAlign: 'center', paddingHorizontal: 30 },
-  btnReintentar:    { backgroundColor: COLORS.primario, paddingHorizontal: 24, paddingVertical: 10, borderRadius: 8 },
+  contenedor: { flex: 1 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 12, paddingVertical: 10, paddingTop: 14 },
+  headerLeft: { flex: 1 },
+  titulo: { color: '#fff', fontSize: 15, fontWeight: 'bold' },
+  leyendaRow: { flexDirection: 'row', gap: 8, marginTop: 3 },
+  leyendaItem: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  leyendaDot: { width: 7, height: 7, borderRadius: 4 },
+  leyendaNum: { color: 'rgba(255,255,255,0.8)', fontSize: 10 },
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  btnIcon: { padding: 6 },
+  btnIconTxt: { fontSize: 17 },
+  centro: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 },
+  cargandoTxt: { color: COLORS.textoSuave, fontSize: 14 },
+  errorTxt: { color: COLORS.peligro, fontSize: 15, textAlign: 'center', paddingHorizontal: 30 },
+  btnReintentar: { backgroundColor: COLORS.primario, paddingHorizontal: 24, paddingVertical: 10, borderRadius: 8 },
   btnReintentarTxt: { color: '#fff', fontWeight: 'bold' },
 });

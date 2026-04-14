@@ -25,48 +25,48 @@ const COL_DER = [
 ];
 
 const LOTES_SVG = [
-  { id: 'lote_001', d: 'M370.5 15.5L331 53.5L345 80L392 36.5L370.5 15.5Z' },
-  { id: 'lote_002', d: 'M410.5 57.5L363.5 104L345.5 81L392.5 36.5L410.5 57.5Z' },
-  { id: 'lote_003', d: 'M427 76.5L382 129.5L363.5 104.5L410.5 58L427 76.5Z' },
-  { id: 'lote_004', d: 'M443.5 95.5L399 153.5L382 129.5L427.5 77L443.5 95.5Z' },
-  { id: 'lote_005', d: 'M458.5 117.5L415.5 176.5L399.5 153.5L444 96L451 103.5L458.5 117.5Z' },
-  { id: 'lote_006', d: 'M432.5 199L416 177L459 118L473.5 144L432.5 199Z' },
-  { id: 'lote_007', d: 'M453.5 224.5L433 199L474 144.5L477.5 151.5L484 170L486 173.5L453.5 224.5Z' },
-  { id: 'lote_008', d: 'M475 250L454 225L486.5 174L507 204.5L475 250Z' },
-  { id: 'lote_009', d: 'M499.5 278.5L475.5 250.5L507 204.5L510 210L529 232L499.5 278.5Z' },
-  { id: 'lote_010', d: 'M522.5 305.5L500 278.5L529 232L541 244.5L552.5 261L522.5 305.5Z' },
-  { id: 'lote_011', d: 'M523 306L547 334.5L576.5 292L552.5 261.5L523 306Z' },
-  { id: 'lote_012', d: 'M547.5 335L573.5 365.5L599 322L576.5 292.5L547.5 335Z' },
-  { id: 'lote_013', d: 'M625.5 354L600 396.5L573.5 365.5L599 322.5L625.5 354Z' },
-  { id: 'lote_014', d: 'M625.5 354L652 384L625.5 427L600 396.5L625.5 354Z' },
-  { id: 'lote_015', d: 'M677.5 413L652 457.5L625.5 427L652 384.5L677.5 413Z' },
-  { id: 'lote_016', d: 'M677.5 413L702.5 443L677.5 489L652 457.5L677.5 413Z' },
-  { id: 'lote_017', d: 'M677.5 489L708 523L730 478L702.5 443L677.5 489Z' },
-  { id: 'lote_018', d: 'M704.5 529.5L677 497L643.5 560.5L672.5 597L704.5 529.5Z' },
-  { id: 'lote_019', d: 'M658.5 474.5L625 537L630.5 544L644 560.5L677.5 497.5L658.5 474.5Z' },
-  { id: 'lote_020', d: 'M625.5 537.5L606 513L640 452.5L658.5 474.5L625.5 537.5Z' },
-  { id: 'lote_021', d: 'M592.5 496.5L586.5 489.5L620.5 430L640 452.5L606.5 513L592.5 496.5Z' },
-  { id: 'lote_022', d: 'M576.5 479.5L567.5 469.5L600.5 406.5L620.5 430L586.5 490L576.5 479.5Z' },
-  { id: 'lote_023', d: 'M600.5 407L581.5 385L548 449.5L567.5 469.5L600.5 407Z' },
-  { id: 'lote_024', d: 'M581.5 385.5L563 363L529 428.5L537.5 437L548 449L581.5 385.5Z' },
-  { id: 'lote_025', d: 'M563.5 363.5L544.5 341.5L511 408.5L529 428.5L563.5 363.5Z' },
-  { id: 'lote_026', d: 'M544.5 341.5L527 320.5L493 386L511.5 408.5L544.5 341.5Z' },
-  { id: 'lote_027', d: 'M527 320.5L509 298.5L476 362.5L493 386L527 320.5Z' },
-  { id: 'lote_028', d: 'M490.5 277.5L456.5 337L476 363L509 299L490.5 277.5Z' },
-  { id: 'lote_029', d: 'M490 277.5L471 255L438 312L456 337L490 277.5Z' },
-  { id: 'lote_030', d: 'M471 255.5L451.5 232L418.5 286.5L438 312.5L471 255.5Z' },
-  { id: 'lote_031', d: 'M418.5 287L398 260.5L431.5 207.5L451.5 231.5L418.5 287Z' },
-  { id: 'lote_032', d: 'M432 208L413 182L378 234L398 260.5L432 208Z' },
-  { id: 'lote_033', d: 'M413.5 182L394 156.5L357.5 206.5L378 234L413.5 182Z' },
-  { id: 'lote_034', d: 'M394 157L376.5 133L337 179L351.5 197.5L357.5 206.5L394 157Z' },
-  { id: 'lote_035', d: 'M376.5 133.5L358 108.5L316 151.5L337.5 178.5L376.5 133.5Z' },
-  { id: 'lote_036', d: 'M358.5 109L339.5 84L294.5 126.5L300 130L315.5 151.5L358.5 109Z' },
-  { id: 'lote_037', d: 'M275 115.5L270.5 109L312.5 69L336 79L340 84L294.5 126.5L275 115.5Z' },
+  { id: 'lote_002', d: 'M100.5 0.5L61 38.5L75 65L122 21.5L100.5 0.5Z' },
+  { id: 'lote_003', d: 'M140.5 42.5L93.5 89L75.5 66L122.5 21.5L140.5 42.5Z' },
+  { id: 'lote_004', d: 'M157 61.5L112 114.5L93.5 89.5L140.5 43L157 61.5Z' },
+  { id: 'lote_005', d: 'M173.5 80.5L129 138.5L112 114.5L157.5 62L173.5 80.5Z' },
+  { id: 'lote_006', d: 'M188.5 102.5L145.5 161.5L129.5 138.5L174 81L181 88.5L188.5 102.5Z' },
+  { id: 'lote_007', d: 'M162.5 184L146 162L189 103L203.5 129L162.5 184Z' },
+  { id: 'lote_008', d: 'M183.5 209.5L163 184L204 129.5L207.5 136.5L214 155L216 158.5L183.5 209.5Z' },
+  { id: 'lote_009', d: 'M205 235L184 210L216.5 159L237 189.5L205 235Z' },
+  { id: 'lote_010', d: 'M229.5 263.5L205.5 235.5L237 189.5L240 195L259 217L229.5 263.5Z' },
+  { id: 'lote_011', d: 'M252.5 290.5L230 263.5L259 217L271 229.5L282.5 246L252.5 290.5Z' },
+  { id: 'lote_012', d: 'M253 291L277 319.5L306.5 277L282.5 246.5L253 291Z' },
+  { id: 'lote_013', d: 'M277.5 320L303.5 350.5L329 307L306.5 277.5L277.5 320Z' },
+  { id: 'lote_014', d: 'M355.5 339L330 381.5L303.5 350.5L329 307.5L355.5 339Z' },
+  { id: 'lote_015', d: 'M355.5 339L382 369L355.5 412L330 381.5L355.5 339Z' },
+  { id: 'lote_016', d: 'M407.5 398L382 442.5L355.5 412L382 369.5L407.5 398Z' },
+  { id: 'lote_017', d: 'M407.5 398L432.5 428L407.5 474L382 442.5L407.5 398Z' },
+  { id: 'lote_018', d: 'M407.5 474L438 508L460 463L432.5 428L407.5 474Z' },
+  { id: 'lote_019', d: 'M434.5 514.5L407 482L373.5 545.5L402.5 582L434.5 514.5Z' },
+  { id: 'lote_020', d: 'M388.5 459.5L355 522L360.5 529L374 545.5L407.5 482.5L388.5 459.5Z' },
+  { id: 'lote_021', d: 'M355.5 522.5L336 498L370 437.5L388.5 459.5L355.5 522.5Z' },
+  { id: 'lote_022', d: 'M322.5 481.5L316.5 474.5L350.5 415L370 437.5L336.5 498L322.5 481.5Z' },
+  { id: 'lote_023', d: 'M306.5 464.5L297.5 454.5L330.5 391.5L350.5 415L316.5 475L306.5 464.5Z' },
+  { id: 'lote_024', d: 'M330.5 392L311.5 370L278 434.5L297.5 454.5L330.5 392Z' },
+  { id: 'lote_025', d: 'M311.5 370.5L293 348L259 413.5L267.5 422L278 434L311.5 370.5Z' },
+  { id: 'lote_026', d: 'M293.5 348.5L274.5 326.5L241 393.5L259 413.5L293.5 348.5Z' },
+  { id: 'lote_027', d: 'M274.5 326.5L257 305.5L223 371L241.5 393.5L274.5 326.5Z' },
+  { id: 'lote_028', d: 'M257 305.5L239 283.5L206 347.5L223 371L257 305.5Z' },
+  { id: 'lote_029', d: 'M220.5 262.5L186.5 322L206 348L239 284L220.5 262.5Z' },
+  { id: 'lote_030', d: 'M220 262.5L201 240L168 297L186 322L220 262.5Z' },
+  { id: 'lote_031', d: 'M201 240.5L181.5 217L148.5 271.5L168 297.5L201 240.5Z' },
+  { id: 'lote_032', d: 'M148.5 272L128 245.5L161.5 192.5L181.5 216.5L148.5 272Z' },
+  { id: 'lote_033', d: 'M162 193L143 167L108 219L128 245.5L162 193Z' },
+  { id: 'lote_034', d: 'M143.5 167L124 141.5L87.5 191.5L108 219L143.5 167Z' },
+  { id: 'lote_035', d: 'M124 142L106.5 118L67 164L81.5 182.5L87.5 191.5L124 142Z' },
+  { id: 'lote_036', d: 'M106.5 118.5L88 93.5L46 136.5L67.5 163.5L106.5 118.5Z' },
+  { id: 'lote_037', d: 'M88.5 94L69.5 69L24.5 111.5L30 115L45.5 136.5L88.5 94Z' },
+  { id: 'lote_001', d: 'M5 100.5L0.5 94L42.5 54L66 64L70 69L24.5 111.5L5 100.5Z' },
 ];
 
-const BB   = { minX: 270, minY: 15, maxX: 730, maxY: 597 };
-const BB_W = BB.maxX - BB.minX;
-const BB_H = BB.maxY - BB.minY;
+const BB   = { minX: 90, minY: 120, maxX: 460, maxY: 582 };
+const BB_W = 460;
+const BB_H = 582;
 
 // ── Helpers ───────────────────────────────────────────────
 function getCentro(d: string) {
@@ -116,7 +116,7 @@ function VistaCuadricula({ lotes, onTapLote, dark = false }: Props) {
   const W         = Dimensions.get('window').width;
   const PAD       = 10;
   const GAP_COL   = 6;   // gap entre columna izq y der
-  const GAP_CARD  = 4;   // gap entre cards de la misma columna
+  const GAP_CARD  = 1;   // gap entre cards de la misma columna
 
   // Anchos iguales para ambas columnas
   const wIzq = Math.floor((W - PAD * 2 - GAP_COL) / 2);
@@ -125,7 +125,7 @@ function VistaCuadricula({ lotes, onTapLote, dark = false }: Props) {
   // ── Cálculo de alturas para que ambas columnas tengan la misma altura total ──
   // Altura total = N * h + (N-1) * GAP_CARD
   // Usamos h_izq = 62px como referencia (20 lotes)
-  const H_CARD_IZQ = 62;
+  const H_CARD_IZQ = 60;
   const H_TOTAL    = COL_IZQ.length * H_CARD_IZQ + (COL_IZQ.length - 1) * GAP_CARD;
   // h_der = (H_total - (N_der-1) * GAP_CARD) / N_der
   const H_CARD_DER = Math.round((H_TOTAL - (COL_DER.length - 1) * GAP_CARD) / COL_DER.length);
@@ -245,8 +245,8 @@ function VistaMapa({ lotes, onTapLote, dark = false }: Props) {
     <View style={[st.mapaWrap,{backgroundColor:bgMap}]}
       onLayout={e=>{ const{width:w,height:h}=e.nativeEvent.layout; centrar(w,h); }}>
       <GestureDetector gesture={all}>
-        <Animated.View style={[{position:'absolute',width:780,height:640},animStyle]}>
-          <Svg width={780} height={640} viewBox="0 0 780 640">
+<Animated.View style={[{ position: 'absolute', width: 460, height: 582 }, animStyle]}>
+  <Svg width={460} height={582} viewBox="0 0 460 582">
             <Defs>
               <LinearGradient id="grad_disponible" x1="0" y1="0" x2="0" y2="1">
                 <Stop offset="0" stopColor="#A8E0A7" stopOpacity="1"/><Stop offset="1" stopColor="#4E9E4D" stopOpacity="1"/>

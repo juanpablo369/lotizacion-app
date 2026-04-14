@@ -6,29 +6,20 @@ import {
 import { getHistorialLote } from '../services/api';
 import { COLORS, ESTADOS, USUARIO_ID } from '../constants';
 
-// ─────────────────────────────────────────────────────────
-//  ModalLote
-//  Props:
-//    visible     → boolean
-//    lote        → objeto lote del mapa (puede ser null)
-//    onCerrar    → fn()
-//    onGuardar   → fn(id, datos) → Promise
-//    onDisponible→ fn(id, notas) → Promise
-// ─────────────────────────────────────────────────────────
 export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDisponible }) {
-  const [tab, setTab]             = useState('accion');   // 'accion' | 'historial'
+  const [tab, setTab]             = useState('accion');
   const [estado, setEstado]       = useState('disponible');
   const [precio, setPrecio]       = useState('');
   const [reserva, setReserva]     = useState('');
   const [comprador, setComprador] = useState('');
   const [telefono, setTelefono]   = useState('');
   const [cedula, setCedula]       = useState('');
+  const [email, setEmail]         = useState('');
   const [notas, setNotas]         = useState('');
   const [guardando, setGuardando] = useState(false);
   const [historial, setHistorial] = useState([]);
   const [loadHist, setLoadHist]   = useState(false);
 
-  // Precarga datos del lote al abrir
   useEffect(() => {
     if (lote && visible) {
       setTab('accion');
@@ -38,11 +29,11 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
       setComprador(lote.comprador ?? '');
       setTelefono(lote.telefono ?? '');
       setCedula(lote.cedula ?? '');
+      setEmail(lote.email ?? '');
       setNotas(lote.notas ?? '');
     }
   }, [lote, visible]);
 
-  // Carga historial al cambiar de tab
   useEffect(() => {
     if (tab === 'historial' && lote) {
       setLoadHist(true);
@@ -56,7 +47,6 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
   const handleGuardar = async () => {
     if (!lote) return;
 
-    // Validaciones básicas
     if (estado === 'vendido' && !precio) {
       return Alert.alert('Falta el precio', 'Ingresá el precio de venta.');
     }
@@ -74,11 +64,12 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
       } else {
         await onGuardar(lote.id, {
           estado,
-          precio:        precio        ? parseFloat(precio)  : null,
-          monto_reserva: reserva       ? parseFloat(reserva) : null,
+          precio:        precio    ? parseFloat(precio)  : null,
+          monto_reserva: reserva   ? parseFloat(reserva) : null,
           comprador:     comprador || null,
           telefono:      telefono  || null,
           cedula:        cedula    || null,
+          email:         email     || null,
           notas:         notas     || null,
           usuario_id:    USUARIO_ID,
         });
@@ -100,7 +91,7 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
       <View style={styles.overlay}>
         <View style={styles.sheet}>
 
-          {/* ── Header ── */}
+          {/* Header */}
           <View style={[styles.header, { borderLeftColor: colorActual }]}>
             <View>
               <Text style={styles.titulo}>{lote.id.replace('_', ' ').toUpperCase()}</Text>
@@ -116,7 +107,7 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
             </TouchableOpacity>
           </View>
 
-          {/* ── Tabs ── */}
+          {/* Tabs */}
           <View style={styles.tabs}>
             {['accion', 'historial'].map(t => (
               <TouchableOpacity
@@ -133,10 +124,9 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
 
           <ScrollView style={styles.cuerpo} keyboardShouldPersistTaps="handled">
 
-            {/* ════════ TAB ACCIÓN ════════ */}
+            {/* TAB ACCIÓN */}
             {tab === 'accion' && (
               <>
-                {/* Selector de estado */}
                 <Text style={styles.label}>Nuevo estado</Text>
                 <View style={styles.estadoRow}>
                   {Object.entries(ESTADOS).map(([key, val]) => (
@@ -152,12 +142,12 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
                   ))}
                 </View>
 
-                {/* Campos condicionales */}
                 {estado !== 'disponible' && (
                   <>
                     <Campo label="Comprador / Cliente" value={comprador} onChangeText={setComprador} placeholder="Nombre completo" />
                     <Campo label="Cédula / RUC" value={cedula} onChangeText={setCedula} placeholder="0912345678" keyboardType="numeric" />
                     <Campo label="Teléfono" value={telefono} onChangeText={setTelefono} placeholder="0991234567" keyboardType="phone-pad" />
+                    <Campo label="Correo electrónico" value={email} onChangeText={setEmail} placeholder="correo@ejemplo.com" keyboardType="email-address" autoCapitalize="none" />
                     {estado === 'vendido' && (
                       <Campo label="Precio de venta ($)" value={precio} onChangeText={setPrecio} placeholder="80000" keyboardType="numeric" />
                     )}
@@ -179,7 +169,6 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
                   numberOfLines={3}
                 />
 
-                {/* Botón guardar */}
                 <TouchableOpacity
                   style={[styles.btnGuardar, { backgroundColor: colorActual }, guardando && styles.btnDeshabilitado]}
                   onPress={handleGuardar}
@@ -193,7 +182,7 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
               </>
             )}
 
-            {/* ════════ TAB HISTORIAL ════════ */}
+            {/* TAB HISTORIAL */}
             {tab === 'historial' && (
               loadHist
                 ? <ActivityIndicator style={{ marginTop: 30 }} color={COLORS.primario} />
@@ -207,11 +196,12 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
                           </View>
                           <Text style={styles.histFecha}>{formatFecha(h.fecha)}</Text>
                         </View>
-                        {h.comprador && <Text style={styles.histDato}>👤 {h.comprador}</Text>}
-                        {h.precio    && <Text style={styles.histDato}>💰 ${Number(h.precio).toLocaleString()}</Text>}
+                        {h.comprador     && <Text style={styles.histDato}>👤 {h.comprador}</Text>}
+                        {h.email         && <Text style={styles.histDato}>✉️  {h.email}</Text>}
+                        {h.precio        && <Text style={styles.histDato}>💰 ${Number(h.precio).toLocaleString()}</Text>}
                         {h.monto_reserva && <Text style={styles.histDato}>🔒 Reserva: ${Number(h.monto_reserva).toLocaleString()}</Text>}
-                        {h.notas     && <Text style={styles.histNota}>{h.notas}</Text>}
-                        {h.vendedor  && <Text style={styles.histVendedor}>por {h.vendedor}</Text>}
+                        {h.notas         && <Text style={styles.histNota}>{h.notas}</Text>}
+                        {h.vendedor      && <Text style={styles.histVendedor}>por {h.vendedor}</Text>}
                         {h.estado_anterior && (
                           <Text style={styles.histAnterior}>
                             Antes: {ESTADOS[h.estado_anterior]?.label ?? h.estado_anterior}
@@ -228,7 +218,6 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
   );
 }
 
-// ── Campo de texto reutilizable ──
 function Campo({ label, ...props }) {
   return (
     <View style={styles.campoWrap}>
@@ -238,96 +227,36 @@ function Campo({ label, ...props }) {
   );
 }
 
-// ── Formateador de fecha ──
 function formatFecha(iso) {
   const d = new Date(iso);
   return d.toLocaleDateString('es-EC', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
-// ─────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    justifyContent: 'flex-end',
-  },
-  sheet: {
-    backgroundColor: COLORS.blanco,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: '88%',
-    paddingBottom: 30,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    padding: 20,
-    borderLeftWidth: 5,
-    borderTopLeftRadius: 20,
-  },
-  titulo:    { fontSize: 18, fontWeight: 'bold', color: COLORS.texto },
-  subtitulo: { fontSize: 13, color: COLORS.textoSuave, marginTop: 2 },
-  btnCerrar: { padding: 4 },
+  overlay:      { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
+  sheet:        { backgroundColor: COLORS.blanco, borderTopLeftRadius: 20, borderTopRightRadius: 20, maxHeight: '88%', paddingBottom: 30 },
+  header:       { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', padding: 20, borderLeftWidth: 5, borderTopLeftRadius: 20 },
+  titulo:       { fontSize: 18, fontWeight: 'bold', color: COLORS.texto },
+  subtitulo:    { fontSize: 13, color: COLORS.textoSuave, marginTop: 2 },
+  btnCerrar:    { padding: 4 },
   btnCerrarTxt: { fontSize: 18, color: COLORS.textoSuave },
-  tabs: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.borde,
-    marginHorizontal: 20,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  tabActivo: {
-    borderBottomWidth: 2,
-    borderBottomColor: COLORS.primario,
-  },
-  tabTxt:      { color: COLORS.textoSuave, fontSize: 14 },
-  tabTxtActivo:{ color: COLORS.primario,   fontSize: 14, fontWeight: 'bold' },
-  cuerpo: { paddingHorizontal: 20, marginTop: 12 },
-  label:  { fontSize: 12, color: COLORS.textoSuave, marginBottom: 4, marginTop: 12 },
-  estadoRow: { flexDirection: 'row', gap: 8 },
-  chip: {
-    flex: 1,
-    paddingVertical: 8,
-    borderRadius: 8,
-    borderWidth: 2,
-    alignItems: 'center',
-  },
-  chipTxt: { fontSize: 13, color: COLORS.texto },
-  campoWrap: { marginTop: 4 },
-  input: {
-    borderWidth: 1,
-    borderColor: COLORS.borde,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 15,
-    color: COLORS.texto,
-    backgroundColor: '#FAFAFA',
-  },
-  inputMulti: { minHeight: 70, textAlignVertical: 'top' },
-  btnGuardar: {
-    borderRadius: 10,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 24,
-    marginBottom: 8,
-  },
+  tabs:         { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: COLORS.borde, marginHorizontal: 20 },
+  tab:          { flex: 1, paddingVertical: 10, alignItems: 'center' },
+  tabActivo:    { borderBottomWidth: 2, borderBottomColor: COLORS.primario },
+  tabTxt:       { color: COLORS.textoSuave, fontSize: 14 },
+  tabTxtActivo: { color: COLORS.primario, fontSize: 14, fontWeight: 'bold' },
+  cuerpo:       { paddingHorizontal: 20, marginTop: 12 },
+  label:        { fontSize: 12, color: COLORS.textoSuave, marginBottom: 4, marginTop: 12 },
+  estadoRow:    { flexDirection: 'row', gap: 8 },
+  chip:         { flex: 1, paddingVertical: 8, borderRadius: 8, borderWidth: 2, alignItems: 'center' },
+  chipTxt:      { fontSize: 13, color: COLORS.texto },
+  campoWrap:    { marginTop: 4 },
+  input:        { borderWidth: 1, borderColor: COLORS.borde, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 10, fontSize: 15, color: COLORS.texto, backgroundColor: '#FAFAFA' },
+  inputMulti:   { minHeight: 70, textAlignVertical: 'top' },
+  btnGuardar:   { borderRadius: 10, paddingVertical: 14, alignItems: 'center', marginTop: 24, marginBottom: 8 },
   btnDeshabilitado: { opacity: 0.6 },
-  btnGuardarTxt: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-  // Historial
-  histItem: {
-    borderWidth: 1,
-    borderColor: COLORS.borde,
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
-    backgroundColor: '#FAFAFA',
-  },
+  btnGuardarTxt:{ color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  histItem:     { borderWidth: 1, borderColor: COLORS.borde, borderRadius: 10, padding: 12, marginBottom: 10, backgroundColor: '#FAFAFA' },
   histHeader:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
   badge:        { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
   badgeTxt:     { fontSize: 12, fontWeight: 'bold', color: '#333' },

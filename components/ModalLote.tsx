@@ -15,6 +15,7 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
   const [telefono, setTelefono]   = useState('');
   const [cedula, setCedula]       = useState('');
   const [email, setEmail]         = useState('');
+  const [direccion, setDireccion]   = useState('');
   const [notas, setNotas]         = useState('');
   const [guardando, setGuardando] = useState(false);
   const [historial, setHistorial] = useState([]);
@@ -30,6 +31,7 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
       setTelefono(lote.telefono ?? '');
       setCedula(lote.cedula ?? '');
       setEmail(lote.email ?? '');
+      setDireccion(lote.direccion ?? '');
       setNotas(lote.notas ?? '');
     }
   }, [lote, visible]);
@@ -70,6 +72,7 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
           telefono:      telefono  || null,
           cedula:        cedula    || null,
           email:         email     || null,
+          direccion:     direccion || null,
           notas:         notas     || null,
           usuario_id:    USUARIO_ID,
         });
@@ -148,6 +151,7 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
                     <Campo label="Cédula / RUC" value={cedula} onChangeText={setCedula} placeholder="0912345678" keyboardType="numeric" />
                     <Campo label="Teléfono" value={telefono} onChangeText={setTelefono} placeholder="0991234567" keyboardType="phone-pad" />
                     <Campo label="Correo electrónico" value={email} onChangeText={setEmail} placeholder="correo@ejemplo.com" keyboardType="email-address" autoCapitalize="none" />
+                    <Campo label="Dirección" value={direccion} onChangeText={setDireccion} placeholder="Calle, ciudad..." />
                     {estado === 'vendido' && (
                       <Campo label="Precio de venta ($)" value={precio} onChangeText={setPrecio} placeholder="80000" keyboardType="numeric" />
                     )}
@@ -198,6 +202,7 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
                         </View>
                         {h.comprador     && <Text style={styles.histDato}>👤 {h.comprador}</Text>}
                         {h.email         && <Text style={styles.histDato}>✉️  {h.email}</Text>}
+                        {h.direccion     && <Text style={styles.histDato}>📍 {h.direccion}</Text>}
                         {h.precio        && <Text style={styles.histDato}>💰 ${Number(h.precio).toLocaleString()}</Text>}
                         {h.monto_reserva && <Text style={styles.histDato}>🔒 Reserva: ${Number(h.monto_reserva).toLocaleString()}</Text>}
                         {h.notas         && <Text style={styles.histNota}>{h.notas}</Text>}

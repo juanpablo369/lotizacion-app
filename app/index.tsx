@@ -60,7 +60,7 @@ export default function PlanoPantalla() {
 
         {/* ── Header ── */}
         <View style={styles.header}>
-          <Text style={styles.titulo}>Plano de Lotización</Text>
+          <Text style={styles.titulo}>Refugio Verde</Text>
           <TouchableOpacity onPress={cargar} style={styles.btnActualizar}>
             <Text style={styles.btnActualizarTxt}>↻</Text>
           </TouchableOpacity>

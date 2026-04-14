@@ -12,19 +12,14 @@ import { ESTADOS } from '../constants';
 
 // ── Distribución real ─────────────────────────────────────
 const COL_IZQ = [
-  'lote_001','lote_037','lote_036','lote_035','lote_034',
-  'lote_033','lote_032','lote_031','lote_030','lote_029',
-  'lote_028','lote_027','lote_026','lote_025','lote_024',
-  'lote_023','lote_022','lote_021','lote_020','lote_019',  // 20 lotes
+  'lote_001','lote_037','lote_036','lote_035','lote_034','lote_033','lote_032','lote_031','lote_030','lote_029', 'lote_028','lote_027','lote_026','lote_025','lote_024','lote_023','lote_022','lote_021','lote_020','lote_019',  // 20 lotes
 ];
 const COL_DER = [
-  'lote_002','lote_003','lote_004','lote_005',
-  'lote_006','lote_007','lote_008','lote_009','lote_010',
-  'lote_011','lote_012','lote_013','lote_014','lote_015',
-  'lote_016','lote_017','lote_018',  // 17 lotes
+  'lote_002','lote_003','lote_004','lote_005', 'lote_006','lote_007','lote_008','lote_009','lote_010', 'lote_011','lote_012','lote_013','lote_014','lote_015', 'lote_016','lote_017','lote_018',  // 17 lotes
 ];
 
 const LOTES_SVG = [
+  { id: 'lote_001', d: 'M5 100.5L0.5 94L42.5 54L66 64L70 69L24.5 111.5L5 100.5Z' },
   { id: 'lote_002', d: 'M100.5 0.5L61 38.5L75 65L122 21.5L100.5 0.5Z' },
   { id: 'lote_003', d: 'M140.5 42.5L93.5 89L75.5 66L122.5 21.5L140.5 42.5Z' },
   { id: 'lote_004', d: 'M157 61.5L112 114.5L93.5 89.5L140.5 43L157 61.5Z' },
@@ -61,10 +56,9 @@ const LOTES_SVG = [
   { id: 'lote_035', d: 'M124 142L106.5 118L67 164L81.5 182.5L87.5 191.5L124 142Z' },
   { id: 'lote_036', d: 'M106.5 118.5L88 93.5L46 136.5L67.5 163.5L106.5 118.5Z' },
   { id: 'lote_037', d: 'M88.5 94L69.5 69L24.5 111.5L30 115L45.5 136.5L88.5 94Z' },
-  { id: 'lote_001', d: 'M5 100.5L0.5 94L42.5 54L66 64L70 69L24.5 111.5L5 100.5Z' },
 ];
 
-const BB   = { minX: 90, minY: 120, maxX: 460, maxY: 582 };
+const BB   = { minX: 0, minY: 0, maxX: 460, maxY: 582 };
 const BB_W = 460;
 const BB_H = 582;
 
@@ -116,7 +110,7 @@ function VistaCuadricula({ lotes, onTapLote, dark = false }: Props) {
   const W         = Dimensions.get('window').width;
   const PAD       = 10;
   const GAP_COL   = 6;   // gap entre columna izq y der
-  const GAP_CARD  = 1;   // gap entre cards de la misma columna
+  const GAP_CARD  = 4;   // gap entre cards de la misma columna
 
   // Anchos iguales para ambas columnas
   const wIzq = Math.floor((W - PAD * 2 - GAP_COL) / 2);
@@ -125,7 +119,7 @@ function VistaCuadricula({ lotes, onTapLote, dark = false }: Props) {
   // ── Cálculo de alturas para que ambas columnas tengan la misma altura total ──
   // Altura total = N * h + (N-1) * GAP_CARD
   // Usamos h_izq = 62px como referencia (20 lotes)
-  const H_CARD_IZQ = 60;
+  const H_CARD_IZQ = 62;
   const H_TOTAL    = COL_IZQ.length * H_CARD_IZQ + (COL_IZQ.length - 1) * GAP_CARD;
   // h_der = (H_total - (N_der-1) * GAP_CARD) / N_der
   const H_CARD_DER = Math.round((H_TOTAL - (COL_DER.length - 1) * GAP_CARD) / COL_DER.length);
@@ -193,104 +187,192 @@ function VistaCuadricula({ lotes, onTapLote, dark = false }: Props) {
 
 // ── Vista Mapa SVG ────────────────────────────────────────
 function VistaMapa({ lotes, onTapLote, dark = false }: Props) {
-  const tx = useSharedValue(0); const ty = useSharedValue(0); const s = useSharedValue(1);
-  const txBase = useSharedValue(0); const tyBase = useSharedValue(0); const sBase = useSharedValue(1);
-  const txRef = useRef(0); const tyRef = useRef(0); const sRef = useRef(1);
+  const SVG_W = 460; const SVG_H = 582;
 
-  const syncRefs = useCallback((sv:number,txv:number,tyv:number)=>{ sRef.current=sv; txRef.current=txv; tyRef.current=tyv; },[]);
-  const calcFit  = (w:number,h:number) => Math.min(w/BB_W,h/BB_H)*0.88;
+  // Un solo objeto de estado — matriz 2D simple: translate + scale
+  // transform: translate(tx, ty) scale(s)
+  // punto SVG → pantalla: screenX = svgX * s + tx
+  // pantalla → SVG:        svgX   = (screenX - tx) / s
+  const tx = useSharedValue(0);
+  const ty = useSharedValue(0);
+  const s  = useSharedValue(1);
 
-  const centrar = (w:number,h:number) => {
-    const fit=calcFit(w,h);
-    const ix=w/2-(BB.minX+BB_W/2)*fit, iy=h/2-(BB.minY+BB_H/2)*fit;
-    tx.value=txBase.value=ix; ty.value=tyBase.value=iy; s.value=sBase.value=fit;
-    txRef.current=ix; tyRef.current=iy; sRef.current=fit;
+  // Refs para hilo JS (tap)
+  const txRef = useRef(0);
+  const tyRef = useRef(0);
+  const sRef  = useRef(1);
+  const contW = useRef(0);
+  const contH = useRef(0);
+
+  const syncRefs = useCallback((sv:number, txv:number, tyv:number) => {
+    sRef.current = sv; txRef.current = txv; tyRef.current = tyv;
+  }, []);
+
+  const initTransform = (w: number, h: number) => {
+    contW.current = w; contH.current = h;
+    const ix = (w - SVG_W) / 2;
+    const iy = (h - SVG_H) / 2;
+    tx.value = ix; ty.value = iy; s.value = 1;
+    txRef.current = ix; tyRef.current = iy; sRef.current = 1;
   };
 
-  const pan = Gesture.Pan().minPointers(1).maxPointers(1)
-    .onUpdate(e=>{ tx.value=txBase.value+e.translationX; ty.value=tyBase.value+e.translationY; })
-    .onEnd(()=>{ txBase.value=tx.value; tyBase.value=ty.value; runOnJS(syncRefs)(s.value,tx.value,ty.value); });
-
-  const pinch = Gesture.Pinch()
-    .onUpdate(e=>{
-      const ns=Math.min(6,Math.max(0.3,sBase.value*e.scale));
-      const fx=(e.focalX-txBase.value)/sBase.value, fy=(e.focalY-tyBase.value)/sBase.value;
-      tx.value=e.focalX-fx*ns; ty.value=e.focalY-fy*ns; s.value=ns;
+  // ── Pan sin delay — NO usar Exclusive con doubleTap ──
+  const pan = Gesture.Pan()
+    .minPointers(1)
+    .maxPointers(1)
+    .averageTouches(true)
+    .onBegin(() => {
+      'worklet';
     })
-    .onEnd(()=>{ sBase.value=s.value; txBase.value=tx.value; tyBase.value=ty.value; runOnJS(syncRefs)(s.value,tx.value,ty.value); });
-
-  const doubleTap = Gesture.Tap().numberOfTaps(2)
-    .onEnd((_e,ok)=>{
-      if(!ok) return;
-      const {width:w,height:h}=Dimensions.get('window');
-      const fit=calcFit(w,h), ix=w/2-(BB.minX+BB_W/2)*fit, iy=h/2-(BB.minY+BB_H/2)*fit;
-      s.value=withSpring(fit); sBase.value=fit;
-      tx.value=withSpring(ix); txBase.value=ix;
-      ty.value=withSpring(iy); tyBase.value=iy;
-      runOnJS(syncRefs)(fit,ix,iy);
+    .onChange(e => {
+      'worklet';
+      tx.value += e.changeX;
+      ty.value += e.changeY;
+    })
+    .onEnd(() => {
+      'worklet';
+      runOnJS(syncRefs)(s.value, tx.value, ty.value);
     });
 
-  const all = Gesture.Simultaneous(Gesture.Exclusive(doubleTap,pan),pinch);
-  const animStyle = useAnimatedStyle(()=>({ transform:[{translateX:tx.value},{translateY:ty.value},{scale:s.value}] }));
+  // ── Pinch — captura estado al inicio con context ──
+  const pinch = Gesture.Pinch()
+    .onBegin(() => {
+      'worklet';
+    })
+    .onChange(e => {
+      'worklet';
+      const prevS = s.value;
+      const ns = Math.min(6, Math.max(0.3, prevS * e.scaleChange));
+      const ratio = ns / prevS;
+      // RN escala alrededor del centro del elemento (SVG_W/2, SVG_H/2),
+      // por eso se descuenta ese offset antes de aplicar la fórmula focal.
+      const fcx = e.focalX - SVG_W / 2;
+      const fcy = e.focalY - SVG_H / 2;
+      tx.value = fcx - ratio * (fcx - tx.value);
+      ty.value = fcy - ratio * (fcy - ty.value);
+      s.value  = ns;
+    })
+    .onEnd(() => {
+      'worklet';
+      runOnJS(syncRefs)(s.value, tx.value, ty.value);
+    });
 
-  const handleTap = useCallback((e:any)=>{
-    const {locationX:x,locationY:y}=e.nativeEvent;
-    const svgX=(x-txRef.current)/sRef.current, svgY=(y-tyRef.current)/sRef.current;
-    for(const lote of LOTES_SVG){ if(puntoDentroDePoligono(svgX,svgY,lote.d)){ onTapLote(lote.id); break; } }
-  },[onTapLote]);
+  // ── Doble tap — sin bloquear el pan ──
+  const lastTap = useRef(0);
+  const handleDoubleTap = useCallback(() => {
+    const now = Date.now();
+    if (now - lastTap.current < 300) {
+      const ix = (contW.current - SVG_W) / 2;
+      const iy = (contH.current - SVG_H) / 2;
+      tx.value = ix; ty.value = iy; s.value = 1;
+      syncRefs(1, ix, iy);
+    }
+    lastTap.current = now;
+  }, [syncRefs]);
+
+  // Pan y pinch simultáneos — sin Exclusive que causa delay
+  const all = Gesture.Simultaneous(pan, pinch);
+
+  const animStyle = useAnimatedStyle(() => ({
+    position: 'absolute' as const,
+    width: SVG_W,
+    height: SVG_H,
+    transform: [
+      { translateX: tx.value },
+      { translateY: ty.value },
+      { scale: s.value },
+    ],
+  }));
+
+  const handleTap = useCallback((e: any) => {
+    const { locationX: x, locationY: y } = e.nativeEvent;
+    handleDoubleTap();
+    // Inversión correcta: RN escala alrededor del centro del elemento.
+    // screenX = (svgX - SVG_W/2) * s + SVG_W/2 + tx  →  svgX = (screenX - tx - SVG_W/2) / s + SVG_W/2
+    const svgX = (x - txRef.current - SVG_W / 2) / sRef.current + SVG_W / 2;
+    const svgY = (y - tyRef.current - SVG_H / 2) / sRef.current + SVG_H / 2;
+    for (const lote of LOTES_SVG) {
+      if (puntoDentroDePoligono(svgX, svgY, lote.d)) {
+        onTapLote(lote.id);
+        return;
+      }
+    }
+  }, [onTapLote, handleDoubleTap]);
 
   const bgMap = dark ? '#1a1a2e' : '#E8E8E0';
 
   return (
-    <View style={[st.mapaWrap,{backgroundColor:bgMap}]}
-      onLayout={e=>{ const{width:w,height:h}=e.nativeEvent.layout; centrar(w,h); }}>
+    <View
+      style={[st.mapaWrap, { backgroundColor: bgMap }]}
+      onLayout={e => {
+        const { width: w, height: h } = e.nativeEvent.layout;
+        initTransform(w, h);
+      }}
+    >
       <GestureDetector gesture={all}>
-<Animated.View style={[{ position: 'absolute', width: 460, height: 582 }, animStyle]}>
-  <Svg width={460} height={582} viewBox="0 0 460 582">
-            <Defs>
-              <LinearGradient id="grad_disponible" x1="0" y1="0" x2="0" y2="1">
-                <Stop offset="0" stopColor="#A8E0A7" stopOpacity="1"/><Stop offset="1" stopColor="#4E9E4D" stopOpacity="1"/>
-              </LinearGradient>
-              <LinearGradient id="grad_reservado" x1="0" y1="0" x2="0" y2="1">
-                <Stop offset="0" stopColor="#F9DF8A" stopOpacity="1"/><Stop offset="1" stopColor="#C49A20" stopOpacity="1"/>
-              </LinearGradient>
-              <LinearGradient id="grad_vendido" x1="0" y1="0" x2="0" y2="1">
-                <Stop offset="0" stopColor="#D0D0D0" stopOpacity="1"/><Stop offset="1" stopColor="#888888" stopOpacity="1"/>
-              </LinearGradient>
-            </Defs>
-            {LOTES_SVG.map(lote=>{
-              const info=lotes[lote.id], estado=info?.estado??'disponible';
-              const centro=getCentro(lote.d);
-              const color = estado==='vendido' ? '#ABABAB' : estado==='reservado' ? '#F0C060' : '#7BC67A';
-              const strokeColor = dark ? '#555' : '#333';
-              const lineas:string[]=[];
-              if(estado==='vendido'){ if(info?.comprador)lineas.push(primerNombre(info.comprador)); if(info?.precio)lineas.push('$'+formatNum(info.precio)); }
-              else if(estado==='reservado'){ if(info?.comprador)lineas.push(primerNombre(info.comprador)); if(info?.monto_reserva)lineas.push('Res $'+formatNum(info.monto_reserva)); if(info?.precio)lineas.push('Tot $'+formatNum(info.precio)); }
-              else lineas.push(lote.id.replace('lote_0','L').replace('lote_','L'));
-              const LINE_H=9, oY=-((lineas.length-1)*LINE_H)/2;
-              return (
-                <G key={lote.id}>
-                  <Path d={lote.d} fill={color} stroke={strokeColor} strokeWidth={1}/>
-                  {lineas.map((linea,i)=>(
-                    <SvgText key={i} x={centro.x} y={centro.y+oY+i*LINE_H}
-                      fontSize={7} fontWeight={i===0?'bold':'normal'}
-                      fill={dark?'#eee':'#1a1a1a'} textAnchor="middle" alignmentBaseline="middle">
-                      {linea}
-                    </SvgText>
-                  ))}
-                </G>
-              );
-            })}
-          </Svg>
-        </Animated.View>
+        <View style={StyleSheet.absoluteFill}>
+          <Animated.View style={animStyle}>
+            <Svg width={SVG_W} height={SVG_H} viewBox={`0 0 ${SVG_W} ${SVG_H}`}>
+              <Defs>
+                <LinearGradient id="grad_disponible" x1="0" y1="0" x2="0" y2="1">
+                  <Stop offset="0" stopColor="#A8E0A7" stopOpacity="1"/>
+                  <Stop offset="1" stopColor="#4E9E4D" stopOpacity="1"/>
+                </LinearGradient>
+                <LinearGradient id="grad_reservado" x1="0" y1="0" x2="0" y2="1">
+                  <Stop offset="0" stopColor="#F9DF8A" stopOpacity="1"/>
+                  <Stop offset="1" stopColor="#C49A20" stopOpacity="1"/>
+                </LinearGradient>
+                <LinearGradient id="grad_vendido" x1="0" y1="0" x2="0" y2="1">
+                  <Stop offset="0" stopColor="#D0D0D0" stopOpacity="1"/>
+                  <Stop offset="1" stopColor="#888888" stopOpacity="1"/>
+                </LinearGradient>
+              </Defs>
+              {LOTES_SVG.map(lote => {
+                const info   = lotes[lote.id];
+                const estado = info?.estado ?? 'disponible';
+                const color  = estado === 'vendido' ? '#ABABAB' : estado === 'reservado' ? '#F0C060' : '#7BC67A';
+                const centro = getCentro(lote.d);
+                const lineas: string[] = [];
+                if (estado === 'vendido') {
+                  if (info?.comprador) lineas.push(primerNombre(info.comprador));
+                  if (info?.precio)    lineas.push('$' + formatNum(info.precio));
+                } else if (estado === 'reservado') {
+                  if (info?.comprador)     lineas.push(primerNombre(info.comprador));
+                  if (info?.monto_reserva) lineas.push('Res $' + formatNum(info.monto_reserva));
+                  if (info?.precio)        lineas.push('Tot $' + formatNum(info.precio));
+                } else {
+                  lineas.push(lote.id.replace('lote_0', 'L').replace('lote_', 'L'));
+                }
+                const LINE_H = 9;
+                const oY = -((lineas.length - 1) * LINE_H) / 2;
+                return (
+                  <G key={lote.id}>
+                    <Path d={lote.d} fill={color} stroke={dark ? '#555' : '#333'} strokeWidth={1}/>
+                    {lineas.map((linea, i) => (
+                      <SvgText key={i} x={centro.x} y={centro.y + oY + i * LINE_H}
+                        fontSize={7} fontWeight={i === 0 ? 'bold' : 'normal'}
+                        fill={dark ? '#eee' : '#1a1a1a'} textAnchor="middle" alignmentBaseline="middle">
+                        {linea}
+                      </SvgText>
+                    ))}
+                  </G>
+                );
+              })}
+            </Svg>
+          </Animated.View>
+        </View>
       </GestureDetector>
       <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={handleTap}/>
-      <Text style={[st.hint,{color:dark?'#aaa':'#555',backgroundColor:dark?'rgba(0,0,0,0.5)':'rgba(255,255,255,0.75)'}]}>
-        Zoom · Doble tap centra
+      <Text style={[st.hint, {
+        color: dark ? '#aaa' : '#555',
+        backgroundColor: dark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.75)'
+      }]}>
+        Zoom · Doble tap resetea
       </Text>
     </View>
   );
 }
+
 
 // ── Componente principal ──────────────────────────────────
 export default function PlanoSVG({ lotes, onTapLote, dark = false }: Props) {
@@ -345,6 +427,6 @@ const st = StyleSheet.create({
   pillBtnActive: {},
   pillTxt:  { fontSize: 13, fontWeight: '500' },
   // Mapa
-  mapaWrap: { flex: 1, overflow: 'hidden' },
+  mapaWrap: { flex: 1, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
   hint:     { position: 'absolute', bottom: 8, alignSelf: 'center', fontSize: 11, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 8 },
 });

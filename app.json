@@ -20,7 +20,8 @@
       "package": "com.netza.lotizacion",
       "buildToolsVersion": "34.0.0",
       "compileSdkVersion": 34,
-      "targetSdkVersion": 34
+      "targetSdkVersion": 34,
+      "usesCleartextTraffic": true
     },
     "ios": {
       "bundleIdentifier": "com.netza.lotizacion"

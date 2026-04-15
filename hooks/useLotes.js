@@ -15,7 +15,7 @@ export function useLotes(lotizacion_id) {
       data.forEach(l => { mapa[l.id] = l; });
       setLotes(mapa);
     } catch (e) {
-      setError('No se pudo cargar el plano. Verificá tu conexión.');
+      setError('No se pudo cargar el plano. Verificá tu conexión.' + e + e.response?.data?.error ? ` (${e.response.data.error})` : '' );
     } finally {
       setCargando(false);
     }

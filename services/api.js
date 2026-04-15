@@ -1,7 +1,11 @@
 import axios from 'axios';
 import Constants from 'expo-constants';
 
-const BASE_URL = Constants.expoConfig?.extra?.apiUrl ?? 'http://localhost:3000';
+// const BASE_URL = Constants.expoConfig?.extra?.apiUrl ?? 'http://localhost:3000';
+
+const BASE_URL = Constants.expoConfig?.extra?.apiUrl 
+  || Constants.manifest?.extra?.apiUrl
+  || 'http://143.198.116.128:3000'; 
 
 const api = axios.create({
   baseURL: BASE_URL,

@@ -36,11 +36,14 @@
       "checkAutomatically": "ON_LOAD"
     },
     "extra": {
-      "apiUrl": "http://143.198.116.128:3000",  
+      "apiUrl": "http://143.198.116.128:3000",
       "router": {},
       "eas": {
         "projectId": "8c485bcb-b909-46e4-9f1f-981049fd661d"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }

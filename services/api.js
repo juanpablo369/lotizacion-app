@@ -7,6 +7,8 @@ const BASE_URL = Constants.expoConfig?.extra?.apiUrl
   || Constants.manifest?.extra?.apiUrl
   || 'http://143.198.116.128:3000'; 
 
+console.log("Base URL", BASE_URL);
+
 const api = axios.create({
   baseURL: BASE_URL,
   timeout: 10000,

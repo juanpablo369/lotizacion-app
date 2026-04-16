@@ -13,7 +13,7 @@ import PantallaHistorial from '../components/PantallaHistorial';
 import { useLotes } from '../hooks/useLotes';
 // import { useAuth  }       from '../hooks/useAuth';
 import { COLORS, ESTADOS } from '../constants';
-import { generarPDFGeneral, compartirPDF, descargarPDF } from '../services/pdf';
+import { generarPDFGeneral, compartirPDF } from '../services/pdf';
 
 const LOTIZACION_ID = 1;
 const DARK_MODE_KEY = 'dark_mode';
@@ -52,45 +52,17 @@ export default function PlanoPantalla() {
     setLoteSeleccionado(null);
   };
 
-  const handlePDFGeneral = () => {
-    Alert.alert(
-      'Reporte general',
-      '¿Qué acción tomamos con el reporte de los propietarios?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Compartir',
-          onPress: async () => {
-            setGenerandoPDF(true);
-            try {
-              const uri = await generarPDFGeneral(lotes);
-              await compartirPDF(uri, 'refugio_verde_reporte.pdf');
-            } catch (e: any) {
-              console.log('PDF ERROR:', e?.message ?? e);
-              Alert.alert('Error', e?.message ?? 'No se pudo generar el PDF.');
-            } finally {
-              setGenerandoPDF(false);
-            }
-          },
-        },
-        {
-          text: 'Descargar',
-          onPress: async () => {
-            setGenerandoPDF(true);
-            try {
-              const uri = await generarPDFGeneral(lotes);
-              const destino = await descargarPDF(uri, 'refugio_verde_reporte.pdf');
-              Alert.alert('Descargado', `Guardado en:\n${destino}`);
-            } catch (e: any) {
-              console.log('PDF ERROR:', e?.message ?? e);
-              Alert.alert('Error', e?.message ?? 'No se pudo generar el PDF.');
-            } finally {
-              setGenerandoPDF(false);
-            }
-          },
-        },
-      ]
-    );
+  const handlePDFGeneral = async () => {
+    setGenerandoPDF(true);
+    try {
+      const uri = await generarPDFGeneral(lotes);
+      await compartirPDF(uri, 'refugio_verde_reporte.pdf');
+    } catch (e: any) {
+      console.log('PDF ERROR:', e?.message ?? e);
+      Alert.alert('Error', e?.message ?? 'No se pudo generar el PDF.');
+    } finally {
+      setGenerandoPDF(false);
+    }
   };
 
   const conteo = Object.values(lotes).reduce((acc: Record<string, number>, l: any) => {
@@ -164,7 +136,7 @@ export default function PlanoPantalla() {
             <TouchableOpacity onPress={handlePDFGeneral} style={styles.btnIcon} disabled={generandoPDF}>
               {generandoPDF
                 ? <ActivityIndicator size="small" color="#fff" />
-                : <MaterialIcons name="picture-as-pdf" size={20} color="#fff" />
+                : <MaterialIcons name="share" size={20} color="#fff" />
               }
             </TouchableOpacity>
             {/* Reload */}

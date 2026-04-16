@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { getLotes } from '../services/api';
-import { generarPDFLote, compartirPDF, descargarPDF } from '../services/pdf';
+import { generarPDFLote, compartirPDF } from '../services/pdf';
 import { COLORS, ESTADOS } from '../constants';
 
 interface Props {
@@ -54,45 +54,17 @@ export default function PantallaHistorial({ visible, onCerrar, dark = false }: P
   };
 
   const handlePDF = async (lote: any) => {
-    Alert.alert(
-      `${lote.id.replace('lote_0', 'L').replace('lote_', 'L')} — ${lote.comprador ?? 'Sin nombre'}`,
-      '¿Qué deseas hacer?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Compartir',
-          onPress: async () => {
-            setPdfId(lote.id);
-            try {
-              const uri = await generarPDFLote(lote);
-              const nombre = `lote_${lote.id}_${(lote.comprador ?? 'sin_nombre').replace(/\s+/g, '_')}.pdf`;
-              await compartirPDF(uri, nombre);
-            } catch (e: any) {
-              console.log('PDF ERROR:', e?.message ?? e);
-              Alert.alert('Error', e?.message ?? 'No se pudo generar el PDF.');
-            } finally {
-              setPdfId(null);
-            }
-          },
-        },
-        {
-          text: 'Descargar',
-          onPress: async () => {
-            setPdfId(lote.id);
-            try {
-              const uri = await generarPDFLote(lote);
-              const nombre = `lote_${lote.id}_${(lote.comprador ?? 'sin_nombre').replace(/\s+/g, '_')}.pdf`;
-              const destino = await descargarPDF(uri, nombre);
-              Alert.alert('Descargado', `Guardado en:\n${destino}`);
-            } catch {
-              Alert.alert('Error', 'No se pudo descargar el PDF.');
-            } finally {
-              setPdfId(null);
-            }
-          },
-        },
-      ]
-    );
+    setPdfId(lote.id);
+    try {
+      const uri = await generarPDFLote(lote);
+      const nombre = `lote_${lote.id}_${(lote.comprador ?? 'sin_nombre').replace(/\s+/g, '_')}.pdf`;
+      await compartirPDF(uri, nombre);
+    } catch (e: any) {
+      console.log('PDF ERROR:', e?.message ?? e);
+      Alert.alert('Error', e?.message ?? 'No se pudo generar el PDF.');
+    } finally {
+      setPdfId(null);
+    }
   };
 
   const vendidos = lotes.filter(l => l.estado === 'vendido').length;
@@ -209,8 +181,8 @@ export default function PantallaHistorial({ visible, onCerrar, dark = false }: P
                       {generando
                         ? <ActivityIndicator size="small" color={txt} />
                         : <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                            <MaterialIcons name="picture-as-pdf" size={16} color={txt} />
-                            <Text style={[styles.btnPDFTxt, { color: txt }]}>Descargar / Compartir PDF</Text>
+                            <MaterialIcons name="share" size={16} color={txt} />
+                            <Text style={[styles.btnPDFTxt, { color: txt }]}>Compartir PDF</Text>
                           </View>
                       }
                     </TouchableOpacity>

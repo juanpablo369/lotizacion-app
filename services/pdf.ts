@@ -209,12 +209,3 @@ export async function compartirPDF(uri: string, nombre: string) {
   });
 }
 
-// ── Descargar PDF ─────────────────────────────────────────
-export async function descargarPDF(uri: string, nombre: string) {
-  await Sharing.shareAsync(uri, {
-    mimeType: 'application/pdf',
-    dialogTitle: 'Guardar PDF',
-    UTI: 'com.adobe.pdf',
-  });
-  return uri;
-}

@@ -3,7 +3,9 @@ import {
   Modal, View, Text, TextInput, TouchableOpacity,
   ScrollView, StyleSheet, ActivityIndicator, Alert,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { getHistorialLote } from '../services/api';
+import { generarPDFLote, compartirPDF } from '../services/pdf';
 import { COLORS, ESTADOS, USUARIO_ID } from '../constants';
 
 export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDisponible }) {
@@ -17,9 +19,10 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
   const [email, setEmail]         = useState('');
   const [direccion, setDireccion]   = useState('');
   const [notas, setNotas]         = useState('');
-  const [guardando, setGuardando] = useState(false);
-  const [historial, setHistorial] = useState([]);
-  const [loadHist, setLoadHist]   = useState(false);
+  const [guardando, setGuardando]     = useState(false);
+  const [generandoPDF, setGenerandoPDF] = useState(false);
+  const [historial, setHistorial]     = useState([]);
+  const [loadHist, setLoadHist]       = useState(false);
 
   useEffect(() => {
     if (lote && visible) {
@@ -79,9 +82,22 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
       }
       onCerrar();
     } catch (e) {
-      Alert.alert('Error', 'No se pudo guardar. Verificá tu conexión.');
+      Alert.alert('Error', 'No se pudo guardar. Verifíca tu conexión.');
     } finally {
       setGuardando(false);
+    }
+  };
+
+  const handleCompartirPDF = async () => {
+    setGenerandoPDF(true);
+    try {
+      const uri = await generarPDFLote(lote);
+      const nombre = `lote_${lote.id}_${(lote.comprador ?? 'sin_nombre').replace(/\s+/g, '_')}.pdf`;
+      await compartirPDF(uri, nombre);
+    } catch (e: any) {
+      Alert.alert('Error', e?.message ?? 'No se pudo generar el PDF.');
+    } finally {
+      setGenerandoPDF(false);
     }
   };
 
@@ -183,6 +199,22 @@ export default function ModalLote({ visible, lote, onCerrar, onGuardar, onDispon
                     : <Text style={styles.btnGuardarTxt}>Guardar cambios</Text>
                   }
                 </TouchableOpacity>
+
+                {(lote.estado === 'vendido' || lote.estado === 'reservado') && (
+                  <TouchableOpacity
+                    style={[styles.btnPDF, generandoPDF && styles.btnDeshabilitado]}
+                    onPress={handleCompartirPDF}
+                    disabled={generandoPDF}
+                  >
+                    {generandoPDF
+                      ? <ActivityIndicator size="small" color={COLORS.primario} />
+                      : <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                          <MaterialIcons name="share" size={16} color={COLORS.primario} />
+                          <Text style={styles.btnPDFTxt}>Compartir PDF</Text>
+                        </View>
+                    }
+                  </TouchableOpacity>
+                )}
               </>
             )}
 
@@ -261,6 +293,8 @@ const styles = StyleSheet.create({
   btnGuardar:   { borderRadius: 10, paddingVertical: 14, alignItems: 'center', marginTop: 24, marginBottom: 8 },
   btnDeshabilitado: { opacity: 0.6 },
   btnGuardarTxt:{ color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  btnPDF:       { borderWidth: 1, borderColor: COLORS.borde, borderRadius: 10, paddingVertical: 12, alignItems: 'center', marginBottom: 8 },
+  btnPDFTxt:    { fontSize: 14, fontWeight: '500', color: COLORS.primario },
   histItem:     { borderWidth: 1, borderColor: COLORS.borde, borderRadius: 10, padding: 12, marginBottom: 10, backgroundColor: '#FAFAFA' },
   histHeader:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
   badge:        { borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },

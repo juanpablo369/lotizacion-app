@@ -16,7 +16,7 @@ export function useLotes(lotizacion_id) {
       setLotes(mapa);
     } catch (e) {
       console.error('❌ useLotes error:', e?.message, e?.response?.status, e?.response?.data);
-      setError(`No se pudo cargar el plano.`);
+      setError(`Error: ${e?.message ?? 'desconocido'} (status: ${e?.response?.status ?? 'sin respuesta'})`);
     } finally {
       setCargando(false);
     }
